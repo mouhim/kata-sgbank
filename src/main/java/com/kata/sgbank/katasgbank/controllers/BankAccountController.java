@@ -3,6 +3,7 @@ package com.kata.sgbank.katasgbank.controllers;
 import com.kata.sgbank.katasgbank.exceptionshandlers.AccountNotFoundException;
 import com.kata.sgbank.katasgbank.models.dtos.AccountDto;
 import com.kata.sgbank.katasgbank.models.dtos.DepositDto;
+import com.kata.sgbank.katasgbank.models.dtos.WithdrawDto;
 import com.kata.sgbank.katasgbank.services.AccountBankService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,12 @@ public class BankAccountController {
     @PostMapping("/accounts/deposit")
     public ResponseEntity<AccountDto> deposit(@RequestBody DepositDto depositDto) throws AccountNotFoundException {
         final AccountDto accountDto = this.accountBankService.deposit(depositDto);
+        return new ResponseEntity<>(accountDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/accounts/withdraw")
+    public ResponseEntity<AccountDto> withdraw(@RequestBody WithdrawDto withdrawDto) throws AccountNotFoundException {
+        final AccountDto accountDto = this.accountBankService.withdraw(withdrawDto);
         return new ResponseEntity<>(accountDto, HttpStatus.OK);
     }
 
