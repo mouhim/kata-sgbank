@@ -1,10 +1,10 @@
 package com.kata.sgbank.katasgbank.exceptionshandlers;
 
 
-public class BalanceNotSufficientException extends RuntimeException {
+public class InvalidAmountException extends RuntimeException {
     private String message;
 
-    public BalanceNotSufficientException(String message) {
+    public InvalidAmountException(String message) {
         this.message = message;
     }
 

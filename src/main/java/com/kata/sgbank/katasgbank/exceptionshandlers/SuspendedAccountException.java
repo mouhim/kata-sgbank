@@ -1,10 +1,9 @@
 package com.kata.sgbank.katasgbank.exceptionshandlers;
 
-
-public class BalanceNotSufficientException extends RuntimeException {
+public class SuspendedAccountException extends RuntimeException {
     private String message;
 
-    public BalanceNotSufficientException(String message) {
+    public SuspendedAccountException(String message) {
         this.message = message;
     }
 
@@ -16,4 +15,5 @@ public class BalanceNotSufficientException extends RuntimeException {
     public void setMessage(String message) {
         this.message = message;
     }
+
 }

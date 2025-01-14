@@ -1,9 +1,9 @@
 package com.kata.sgbank.katasgbank.mappers;
 
 import com.kata.sgbank.katasgbank.models.dtos.AccountOperationDto;
-import com.kata.sgbank.katasgbank.models.dtos.BankAccountDto;
+import com.kata.sgbank.katasgbank.models.dtos.AccountDto;
 import com.kata.sgbank.katasgbank.models.entities.AccountOperationEntity;
-import com.kata.sgbank.katasgbank.models.entities.BankAccountEntity;
+import com.kata.sgbank.katasgbank.models.entities.AccountEntity;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 public class BankAccountMapperImpl implements BankAccountMapper {
 
     @Override
-    public BankAccountDto fromBankAccountEntityToDto(BankAccountEntity bankAccountEntity) {
-        final BankAccountDto bankAccountDto = new BankAccountDto();
-        BeanUtils.copyProperties(bankAccountEntity, bankAccountDto);
-        return bankAccountDto;
+    public AccountDto fromBankAccountEntityToDto(AccountEntity accountEntity) {
+        final AccountDto accountDto = new AccountDto();
+        BeanUtils.copyProperties(accountEntity, accountDto);
+        return accountDto;
     }
 
     @Override

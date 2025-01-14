@@ -1,13 +1,13 @@
 package com.kata.sgbank.katasgbank.mappers;
 
 import com.kata.sgbank.katasgbank.models.dtos.AccountOperationDto;
-import com.kata.sgbank.katasgbank.models.dtos.BankAccountDto;
+import com.kata.sgbank.katasgbank.models.dtos.AccountDto;
 import com.kata.sgbank.katasgbank.models.entities.AccountOperationEntity;
-import com.kata.sgbank.katasgbank.models.entities.BankAccountEntity;
+import com.kata.sgbank.katasgbank.models.entities.AccountEntity;
 
 public interface BankAccountMapper {
 
-    BankAccountDto fromBankAccountEntityToDto(BankAccountEntity bankAccountEntity);
+    AccountDto fromBankAccountEntityToDto(AccountEntity accountEntity);
 
     AccountOperationEntity fromBankAccountDtoToEntity(AccountOperationDto accountOperationDto);
 
