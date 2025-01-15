@@ -9,6 +9,7 @@ public class AccountOperationEntity {
     private Long id;
     private Date operationDate;
     private double amount;
+    private double balance;
     private OperationType type;
     private AccountEntity bankAccount;
     private String description;

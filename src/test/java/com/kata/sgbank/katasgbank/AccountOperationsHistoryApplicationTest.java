@@ -2,6 +2,7 @@ package com.kata.sgbank.katasgbank;
 
 import com.kata.sgbank.katasgbank.exceptionshandlers.SuspendedAccountException;
 import com.kata.sgbank.katasgbank.models.dtos.AccountOperationDto;
+import com.kata.sgbank.katasgbank.models.dtos.ResultAccountOperationsDto;
 import com.kata.sgbank.katasgbank.services.AccountBankService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,8 @@ class AccountOperationsHistoryApplicationTest {
 
     @Test
     public void testlengthOfAccountOperationsEmptyByDefault() {
-        final List<AccountOperationDto> accountOperationDtos = accountBankService.accountOperationsHistory(1L);
+        ResultAccountOperationsDto resultAccountOperationsDto = accountBankService.accountOperationsHistory(1L);
+        final List<AccountOperationDto> accountOperationDtos = resultAccountOperationsDto.getAccountOperations();
         assertTrue(accountOperationDtos.isEmpty());
     }
 

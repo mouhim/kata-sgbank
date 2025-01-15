@@ -1,11 +1,8 @@
 package com.kata.sgbank.katasgbank.services.impl;
 
 import com.kata.sgbank.katasgbank.exceptionshandlers.*;
-import com.kata.sgbank.katasgbank.mappers.BankAccountMapper;
-import com.kata.sgbank.katasgbank.models.dtos.AccountDto;
-import com.kata.sgbank.katasgbank.models.dtos.AccountOperationDto;
-import com.kata.sgbank.katasgbank.models.dtos.DepositDto;
-import com.kata.sgbank.katasgbank.models.dtos.WithdrawDto;
+import com.kata.sgbank.katasgbank.mappers.AccountMapper;
+import com.kata.sgbank.katasgbank.models.dtos.*;
 import com.kata.sgbank.katasgbank.models.entities.AccountEntity;
 import com.kata.sgbank.katasgbank.models.entities.AccountOperationEntity;
 import com.kata.sgbank.katasgbank.models.enums.AccountStatus;
@@ -54,10 +51,10 @@ public class AccountBankServiceImpl implements AccountBankService {
         AccountBankServiceImpl.accountsList = List.of(account1, account2, account3);
     }
 
-    private final BankAccountMapper bankAccountMapper;
+    private final AccountMapper accountMapper;
 
-    public AccountBankServiceImpl(BankAccountMapper bankAccountMapper) {
-        this.bankAccountMapper = bankAccountMapper;
+    public AccountBankServiceImpl(AccountMapper accountMapper) {
+        this.accountMapper = accountMapper;
     }
 
     @Override
@@ -78,12 +75,12 @@ public class AccountBankServiceImpl implements AccountBankService {
         final double newBalanceValue = bankAccount.getBalance() + amount;
         bankAccount.setBalance(newBalanceValue);
 
-        final AccountOperationEntity accountOperation = buildAccountOperationEntity(OperationType.DEPOSIT, amount, description, bankAccount);
+        final AccountOperationEntity accountOperation = buildAccountOperationEntity(OperationType.DEPOSIT, amount, newBalanceValue, description, bankAccount);
 
         bankAccount.getAccountOperations().add(accountOperation);
 
         log.info("The account with id : {} has been successfully credited", +accountId);
-        return bankAccountMapper.fromBankAccountEntityToDto(bankAccount);
+        return accountMapper.fromBankAccountEntityToDto(bankAccount);
     }
 
     @Override
@@ -103,16 +100,16 @@ public class AccountBankServiceImpl implements AccountBankService {
 
         if (bankAccount.getBalance() < amount) throw new BalanceNotSufficientException("Balance not sufficient");
 
-        final AccountOperationEntity accountOperation = buildAccountOperationEntity(OperationType.WITHDRAW, amount, description, bankAccount);
-
-        bankAccount.getAccountOperations().add(accountOperation);
-
         final double newBalanceValue = bankAccount.getBalance() - amount;
         bankAccount.setBalance(newBalanceValue);
 
+        final AccountOperationEntity accountOperation = buildAccountOperationEntity(OperationType.WITHDRAW, amount, newBalanceValue, description, bankAccount);
+
+        bankAccount.getAccountOperations().add(accountOperation);
+
         log.info("The account with id : {} has been successfully debited", +accountId);
 
-        return bankAccountMapper.fromBankAccountEntityToDto(bankAccount);
+        return accountMapper.fromBankAccountEntityToDto(bankAccount);
     }
 
     private static void verifyIfAccountIsSuspended(AccountEntity bankAccount) {
@@ -120,7 +117,8 @@ public class AccountBankServiceImpl implements AccountBankService {
             throw new SuspendedAccountException("Your bank account is suspended no operations will be allowed");
     }
 
-    private static AccountOperationEntity buildAccountOperationEntity(OperationType withdraw, double amount, String description, AccountEntity bankAccount) {
+    private static AccountOperationEntity buildAccountOperationEntity(OperationType withdraw, double amount,
+                                                                      double newBalanceValue, String description, AccountEntity bankAccount) {
         final AccountOperationEntity accountOperation = new AccountOperationEntity();
         accountOperation.setId(generateIdRandom());
         accountOperation.setType(withdraw);
@@ -132,22 +130,23 @@ public class AccountBankServiceImpl implements AccountBankService {
     }
 
     @Override
-    public List<AccountOperationDto> accountOperationsHistory(final Long accountId) {
+    public ResultAccountOperationsDto accountOperationsHistory(final Long accountId) {
 
         log.info("Start getting account operations history!");
 
         if (accountId == null) throw new UnknownAccountIdException("The accountId should not be unknown");
 
-        final List<AccountOperationEntity> accountOperations = getAccountOperationsHistoryBId(accountId);
+        final AccountEntity bankAccount = getAccountById(accountId).orElseThrow(() -> new AccountNotFoundException("BankAccount not found"));
+
+        final List<AccountOperationEntity> accountOperations = getAccountOperationsHistoryBId(bankAccount);
 
         log.info("Finish getting account operations !");
 
-        return accountOperations.stream().map(bankAccountMapper::fromAccountOperationEntityToDto).collect(Collectors.toList());
+        final List<AccountOperationDto> accountOperationDtosList = accountOperations.stream().map(accountMapper::fromAccountOperationEntityToDto).collect(Collectors.toList());
+        return accountMapper.resultAccountOperationsDtoMapper(bankAccount, accountOperationDtosList);
     }
 
-    private List<AccountOperationEntity> getAccountOperationsHistoryBId(final Long accountId) {
-
-        final AccountEntity bankAccount = getAccountById(accountId).orElseThrow(() -> new AccountNotFoundException("BankAccount not found"));
+    private List<AccountOperationEntity> getAccountOperationsHistoryBId(final AccountEntity bankAccount) {
 
         verifyIfAccountIsSuspended(bankAccount);
 

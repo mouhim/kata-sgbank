@@ -1,10 +1,7 @@
 package com.kata.sgbank.katasgbank.controllers;
 
 import com.kata.sgbank.katasgbank.exceptionshandlers.AccountNotFoundException;
-import com.kata.sgbank.katasgbank.models.dtos.AccountDto;
-import com.kata.sgbank.katasgbank.models.dtos.AccountOperationDto;
-import com.kata.sgbank.katasgbank.models.dtos.DepositDto;
-import com.kata.sgbank.katasgbank.models.dtos.WithdrawDto;
+import com.kata.sgbank.katasgbank.models.dtos.*;
 import com.kata.sgbank.katasgbank.services.AccountBankService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -45,9 +42,9 @@ public class BankAccountController {
     @GetMapping("/accounts/{accountId}/operations")
     @Operation(summary = "Get account operations history", description = "Returns the history of operations for a given accountId")
     @Parameter(description = "accountId", required = true)
-    public ResponseEntity<List<AccountOperationDto>> getHistory(@PathVariable Long accountId) {
-        final List<AccountOperationDto> accountHistory = this.accountBankService.accountOperationsHistory(accountId);
-        return new ResponseEntity<>(accountHistory, HttpStatus.OK);
+    public ResponseEntity<ResultAccountOperationsDto> getHistory(@PathVariable Long accountId) {
+        final ResultAccountOperationsDto resultAccountOperationsDto = this.accountBankService.accountOperationsHistory(accountId);
+        return new ResponseEntity<>(resultAccountOperationsDto, HttpStatus.OK);
     }
 
 }

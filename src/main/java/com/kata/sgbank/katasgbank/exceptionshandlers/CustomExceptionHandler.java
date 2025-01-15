@@ -51,6 +51,26 @@ public class CustomExceptionHandler {
         return new ResponseEntity<>(accountErrorDto, HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(AccountOperationIsNullException.class)
+    public ResponseEntity<AccountErrorDto> handleAccountOperationIsNullException(AccountOperationIsNullException e) {
+        final AccountErrorDto accountErrorDto = new AccountErrorDto();
+        accountErrorDto.setCode(HttpStatus.FORBIDDEN.value());
+        accountErrorDto.setMessage(e.getMessage());
+        accountErrorDto.setTimestamp(LocalDateTime.now());
+
+        return new ResponseEntity<>(accountErrorDto, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(AccountIsNullException.class)
+    public ResponseEntity<AccountErrorDto> handleAccountIsNullException(AccountIsNullException e) {
+        final AccountErrorDto accountErrorDto = new AccountErrorDto();
+        accountErrorDto.setCode(HttpStatus.BAD_REQUEST.value());
+        accountErrorDto.setMessage(e.getMessage());
+        accountErrorDto.setTimestamp(LocalDateTime.now());
+
+        return new ResponseEntity<>(accountErrorDto, HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<AccountErrorDto> handleProjectWebException(Exception e) {
         final AccountErrorDto accountErrorDto = new AccountErrorDto();
