@@ -3,6 +3,7 @@ package com.kata.sgbank.katasgbank.services.impl;
 import com.kata.sgbank.katasgbank.exceptionshandlers.*;
 import com.kata.sgbank.katasgbank.mappers.BankAccountMapper;
 import com.kata.sgbank.katasgbank.models.dtos.AccountDto;
+import com.kata.sgbank.katasgbank.models.dtos.AccountOperationDto;
 import com.kata.sgbank.katasgbank.models.dtos.DepositDto;
 import com.kata.sgbank.katasgbank.models.dtos.WithdrawDto;
 import com.kata.sgbank.katasgbank.models.entities.AccountEntity;
@@ -10,13 +11,19 @@ import com.kata.sgbank.katasgbank.models.entities.AccountOperationEntity;
 import com.kata.sgbank.katasgbank.models.enums.AccountStatus;
 import com.kata.sgbank.katasgbank.models.enums.OperationType;
 import com.kata.sgbank.katasgbank.services.AccountBankService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.kata.sgbank.katasgbank.utils.CalculUtils.generateIdRandom;
 
 @Service
+@Slf4j
 public class AccountBankServiceImpl implements AccountBankService {
 
     private static List<AccountEntity> accountsList = new ArrayList<>();
@@ -56,6 +63,8 @@ public class AccountBankServiceImpl implements AccountBankService {
     @Override
     public AccountDto deposit(final DepositDto depositDto) {
 
+        log.info("Starting new deposit operation !");
+
         final Long accountId = depositDto.getAccountId();
         final double amount = depositDto.getAmount();
         final String description = depositDto.getDescription();
@@ -64,27 +73,23 @@ public class AccountBankServiceImpl implements AccountBankService {
 
         final AccountEntity bankAccount = getAccountById(accountId).orElseThrow(() -> new AccountNotFoundException("BankAccount not found"));
 
-        if (AccountStatus.SUSPENDED.equals(bankAccount.getStatus()))
-            throw new SuspendedAccountException("Your bank account is suspended no operations will be allowed");
+        verifyIfAccountIsSuspended(bankAccount);
 
-        double newBalanceValue = bankAccount.getBalance() + amount;
+        final double newBalanceValue = bankAccount.getBalance() + amount;
         bankAccount.setBalance(newBalanceValue);
 
-        final AccountOperationEntity accountOperation = new AccountOperationEntity();
-        accountOperation.setId(generateIdRandom());
-        accountOperation.setType(OperationType.DEPOSIT);
-        accountOperation.setAmount(amount);
-        accountOperation.setDescription(description);
-        accountOperation.setOperationDate(new Date());
-        accountOperation.setBankAccount(bankAccount);
+        final AccountOperationEntity accountOperation = buildAccountOperationEntity(OperationType.DEPOSIT, amount, description, bankAccount);
 
         bankAccount.getAccountOperations().add(accountOperation);
 
+        log.info("The account with id : {} has been successfully credited", +accountId);
         return bankAccountMapper.fromBankAccountEntityToDto(bankAccount);
     }
 
     @Override
     public AccountDto withdraw(final WithdrawDto withdrawDto) {
+
+        log.info("Starting new withdraw operation !");
 
         final Long accountId = withdrawDto.getAccountId();
         final double amount = withdrawDto.getAmount();
@@ -92,28 +97,63 @@ public class AccountBankServiceImpl implements AccountBankService {
 
         validateCommonInputs(accountId, amount);
 
-        final AccountEntity bankAccount = getAccountById(accountId)
-                .orElseThrow(() -> new AccountNotFoundException("BankAccount not found"));
+        final AccountEntity bankAccount = getAccountById(accountId).orElseThrow(() -> new AccountNotFoundException("BankAccount not found"));
 
+        verifyIfAccountIsSuspended(bankAccount);
+
+        if (bankAccount.getBalance() < amount) throw new BalanceNotSufficientException("Balance not sufficient");
+
+        final AccountOperationEntity accountOperation = buildAccountOperationEntity(OperationType.WITHDRAW, amount, description, bankAccount);
+
+        bankAccount.getAccountOperations().add(accountOperation);
+
+        final double newBalanceValue = bankAccount.getBalance() - amount;
+        bankAccount.setBalance(newBalanceValue);
+
+        log.info("The account with id : {} has been successfully debited", +accountId);
+
+        return bankAccountMapper.fromBankAccountEntityToDto(bankAccount);
+    }
+
+    private static void verifyIfAccountIsSuspended(AccountEntity bankAccount) {
         if (AccountStatus.SUSPENDED.equals(bankAccount.getStatus()))
             throw new SuspendedAccountException("Your bank account is suspended no operations will be allowed");
+    }
 
-        if (bankAccount.getBalance() < amount)
-            throw new BalanceNotSufficientException("Balance not sufficient");
-
-        AccountOperationEntity accountOperation = new AccountOperationEntity();
-        accountOperation.setType(OperationType.WITHDRAW);
+    private static AccountOperationEntity buildAccountOperationEntity(OperationType withdraw, double amount, String description, AccountEntity bankAccount) {
+        final AccountOperationEntity accountOperation = new AccountOperationEntity();
+        accountOperation.setId(generateIdRandom());
+        accountOperation.setType(withdraw);
         accountOperation.setAmount(amount);
         accountOperation.setDescription(description);
         accountOperation.setOperationDate(new Date());
         accountOperation.setBankAccount(bankAccount);
+        return accountOperation;
+    }
 
-        bankAccount.getAccountOperations().add(accountOperation);
+    @Override
+    public List<AccountOperationDto> accountOperationsHistory(final Long accountId) {
 
-        double newBalanceValue = bankAccount.getBalance() - amount;
-        bankAccount.setBalance(newBalanceValue);
+        log.info("Start getting account operations history!");
 
-        return bankAccountMapper.fromBankAccountEntityToDto(bankAccount);
+        if (accountId == null) throw new UnknownAccountIdException("The accountId should not be unknown");
+
+        final List<AccountOperationEntity> accountOperations = getAccountOperationsHistoryBId(accountId);
+
+        log.info("Finish getting account operations !");
+
+        return accountOperations.stream().map(bankAccountMapper::fromAccountOperationEntityToDto).collect(Collectors.toList());
+    }
+
+    private List<AccountOperationEntity> getAccountOperationsHistoryBId(final Long accountId) {
+
+        final AccountEntity bankAccount = getAccountById(accountId).orElseThrow(() -> new AccountNotFoundException("BankAccount not found"));
+
+        verifyIfAccountIsSuspended(bankAccount);
+
+        final List<AccountOperationEntity> accountOperations = bankAccount.getAccountOperations();
+
+        return accountOperations != null && !accountOperations.isEmpty() ? accountOperations : new ArrayList<>();
     }
 
     private void validateCommonInputs(final Long accountId, final double amount) {
@@ -124,8 +164,8 @@ public class AccountBankServiceImpl implements AccountBankService {
 
     }
 
-    private static Optional<AccountEntity> getAccountById(Long accountId) {
-        return accountsList.stream().filter(account -> Objects.equals(accountId, account.getId())).findFirst();
+    private static Optional<AccountEntity> getAccountById(final Long accountId) {
+        return accountsList.stream().filter(account -> accountId == account.getId()).findFirst();
     }
 
 }

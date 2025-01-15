@@ -1,9 +1,15 @@
 package com.kata.sgbank.katasgbank.models.dtos;
 
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 public class DepositDto {
 
+    @NotNull(message = "The accountIs is mandatory")
+    @Size(min = 1, max = 20, message = "accountId must contain between 1 and 20 characters")
     private Long accountId;
+    @NotNull(message = "The amount is mandatory")
     private double amount;
     private String description;
 
