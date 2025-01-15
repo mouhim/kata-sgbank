@@ -24,31 +24,31 @@ public class CustomExceptionHandler {
     @ExceptionHandler(BalanceNotSufficientException.class)
     public ResponseEntity<AccountErrorDto> handleBalanceNotSufficientException(BalanceNotSufficientException e) {
         final AccountErrorDto accountErrorDto = new AccountErrorDto();
-        accountErrorDto.setCode(HttpStatus.NOT_ACCEPTABLE.value());
+        accountErrorDto.setCode(HttpStatus.BAD_REQUEST.value());
         accountErrorDto.setMessage(e.getMessage());
         accountErrorDto.setTimestamp(LocalDateTime.now());
 
-        return new ResponseEntity<>(accountErrorDto, HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(accountErrorDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InvalidAmountException.class)
     public ResponseEntity<AccountErrorDto> handleInvalidAmountException(InvalidAmountException e) {
         final AccountErrorDto accountErrorDto = new AccountErrorDto();
-        accountErrorDto.setCode(HttpStatus.NOT_ACCEPTABLE.value());
+        accountErrorDto.setCode(HttpStatus.BAD_REQUEST.value());
         accountErrorDto.setMessage(e.getMessage());
         accountErrorDto.setTimestamp(LocalDateTime.now());
 
-        return new ResponseEntity<>(accountErrorDto, HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity<>(accountErrorDto, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(SuspendedAccountException.class)
     public ResponseEntity<AccountErrorDto> handleSuspendedAccountException(SuspendedAccountException e) {
         final AccountErrorDto accountErrorDto = new AccountErrorDto();
-        accountErrorDto.setCode(HttpStatus.METHOD_NOT_ALLOWED.value());
+        accountErrorDto.setCode(HttpStatus.FORBIDDEN.value());
         accountErrorDto.setMessage(e.getMessage());
         accountErrorDto.setTimestamp(LocalDateTime.now());
 
-        return new ResponseEntity<>(accountErrorDto, HttpStatus.METHOD_NOT_ALLOWED);
+        return new ResponseEntity<>(accountErrorDto, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(Exception.class)

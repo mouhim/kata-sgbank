@@ -1,0 +1,103 @@
+{
+	"info": {
+		"_postman_id": "c678eea9-86f4-4055-aa5f-c9160b0b57d1",
+		"name": "kata-sgbank",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "40949361"
+	},
+	"item": [
+		{
+			"name": "BankAccount Deposit",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"accountId\":\"1\",\r\n    \"amount\":\"10\",\r\n    \"description\":\"deposer 10 EUR dans mon solde\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/kata/accounts/deposit",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"kata",
+						"accounts",
+						"deposit"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BankAccount Withdraw",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"accountId\":\"1\",\r\n    \"amount\":\"200\",\r\n    \"description\":\"retirer 200 EUR de mon solde\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/kata/accounts/withraw",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"kata",
+						"accounts",
+						"withraw"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BankAccount Operations History",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"accountId\":\"1\",\r\n    \"amount\":\"200\",\r\n    \"description\":\"retirer 200 EUR de mon solde\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/api/v1/kata/accounts/withraw",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"kata",
+						"accounts",
+						"withraw"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
