@@ -3,10 +3,13 @@ package com.kata.sgbank.katasgbank.exceptionshandlers;
 import com.kata.sgbank.katasgbank.models.dtos.AccountErrorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
 public class CustomExceptionHandler {
@@ -69,6 +72,16 @@ public class CustomExceptionHandler {
         accountErrorDto.setTimestamp(LocalDateTime.now());
 
         return new ResponseEntity<>(accountErrorDto, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+        final Map<String, String> mapErrors = new HashMap<>();
+
+        e.getBindingResult().getFieldErrors().forEach(fieldError ->
+                mapErrors.put(fieldError.getField(), fieldError.getDefaultMessage()));
+
+        return new ResponseEntity<>(mapErrors, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)

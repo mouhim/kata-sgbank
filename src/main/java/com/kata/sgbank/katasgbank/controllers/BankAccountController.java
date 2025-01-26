@@ -6,6 +6,7 @@ import com.kata.sgbank.katasgbank.services.AccountBankService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class BankAccountController {
     @PostMapping("/accounts/deposit")
     @Operation(summary = "Deposit into a bank account", description = "Deposits a given amount into a given bank account")
     @Parameter(description = "accountId and amount", required = true)
-    public ResponseEntity<AccountDto> deposit(@RequestBody DepositDto depositDto) throws AccountNotFoundException {
+    public ResponseEntity<AccountDto> deposit(@Valid @RequestBody DepositDto depositDto) throws AccountNotFoundException {
         final AccountDto accountDto = this.accountBankService.deposit(depositDto);
         return new ResponseEntity<>(accountDto, HttpStatus.OK);
     }
@@ -34,7 +35,7 @@ public class BankAccountController {
     @PostMapping("/accounts/withdraw")
     @Operation(summary = "Withdraw from a bank account", description = "Withdraws a given amount from a given bank account. If insufficient funds, returns an error")
     @Parameter(description = "accountId and amount", required = true)
-    public ResponseEntity<AccountDto> withdraw(@RequestBody WithdrawDto withdrawDto) throws AccountNotFoundException {
+    public ResponseEntity<AccountDto> withdraw(@Valid @RequestBody WithdrawDto withdrawDto) throws AccountNotFoundException {
         final AccountDto accountDto = this.accountBankService.withdraw(withdrawDto);
         return new ResponseEntity<>(accountDto, HttpStatus.OK);
     }
