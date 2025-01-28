@@ -33,7 +33,7 @@ class WithdrawApplicationTest {
 
     @BeforeEach
     public void setUp() {
-        withdrawDto = new WithdrawDto(1L, 120000, "retirer 12000 de mon compte");
+        withdrawDto = new WithdrawDto(11L, 120000, "retirer 12000 de mon compte");
     }
 
     // Méthode pour fournir les paires de fichiers JSON (requête et réponse)
@@ -78,7 +78,7 @@ class WithdrawApplicationTest {
 
     @Test
     public void testItShouldThrowSuspendedAccountException() {
-        withdrawDto.setAccountId(3L);
+        withdrawDto.setAccountId(13L);
         assertThrows(SuspendedAccountException.class,
                 () -> accountBankService.withdraw(withdrawDto));
     }

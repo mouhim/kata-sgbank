@@ -28,21 +28,21 @@ public class AccountBankServiceImpl implements AccountBankService {
     static {
         // Without JpaRepository interface, i will initialize the list here
         final AccountEntity account1 = new AccountEntity();
-        account1.setId(1L);
+        account1.setId(11L);
         account1.setBalance(10000);
         account1.setCreatedAt(new Date());
         account1.setStatus(AccountStatus.ACTIVATED);
         account1.setAccountOperations(new ArrayList<>());
 
         final AccountEntity account2 = new AccountEntity();
-        account2.setId(2L);
+        account2.setId(12L);
         account2.setBalance(15000);
         account2.setCreatedAt(new Date());
         account2.setStatus(AccountStatus.ACTIVATED);
         account2.setAccountOperations(new ArrayList<>());
 
         final AccountEntity account3 = new AccountEntity();
-        account3.setId(3L);
+        account3.setId(13L);
         account3.setBalance(4000);
         account3.setCreatedAt(new Date());
         account3.setStatus(AccountStatus.SUSPENDED);

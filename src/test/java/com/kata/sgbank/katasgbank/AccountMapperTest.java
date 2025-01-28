@@ -4,14 +4,10 @@ import com.kata.sgbank.katasgbank.exceptionshandlers.AccountIsNullException;
 import com.kata.sgbank.katasgbank.mappers.AccountMapper;
 import com.kata.sgbank.katasgbank.models.dtos.AccountDto;
 import com.kata.sgbank.katasgbank.models.entities.AccountEntity;
-import com.kata.sgbank.katasgbank.models.enums.AccountStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.ArrayList;
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

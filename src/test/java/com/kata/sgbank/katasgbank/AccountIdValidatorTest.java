@@ -39,8 +39,6 @@ public class AccountIdValidatorTest {
         assertTrue(accountIdValidator.isValid(accountId, context));
     }
 
-
-
     private ValidAccountId createAnnotation(int min, int max) {
         return new ValidAccountId() {
             @Override

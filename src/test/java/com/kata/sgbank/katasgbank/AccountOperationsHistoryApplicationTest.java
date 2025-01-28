@@ -22,12 +22,12 @@ class AccountOperationsHistoryApplicationTest {
     @Test
     public void testSuspendedItShouldThrowSuspendedAccountException() {
         assertThrows(SuspendedAccountException.class,
-                () -> accountBankService.accountOperationsHistory(3L));
+                () -> accountBankService.accountOperationsHistory(13L));
     }
 
     @Test
     public void testlengthOfAccountOperationsEmptyByDefault() {
-        ResultAccountOperationsDto resultAccountOperationsDto = accountBankService.accountOperationsHistory(1L);
+        ResultAccountOperationsDto resultAccountOperationsDto = accountBankService.accountOperationsHistory(11L);
         final List<AccountOperationDto> accountOperationDtos = resultAccountOperationsDto.getAccountOperations();
         assertTrue(accountOperationDtos.isEmpty());
     }

@@ -32,7 +32,7 @@ class DepositApplicationTest {
 
     @BeforeEach
     public void setUp() {
-        depositDto = new DepositDto(1L, 150, "déposer 150 dans mon compte");
+        depositDto = new DepositDto(11L, 150, "déposer 150 dans mon compte");
     }
 
     // Méthode pour fournir les paires de fichiers JSON (requête et réponse)
@@ -70,7 +70,7 @@ class DepositApplicationTest {
 
     @Test
     public void testItShouldThrowSuspendedAccountException() {
-        depositDto.setAccountId(3L);
+        depositDto.setAccountId(13L);
         assertThrows(SuspendedAccountException.class, () -> accountBankService.deposit(depositDto));
     }
 
@@ -85,6 +85,5 @@ class DepositApplicationTest {
         depositDto.setAmount(0);
         assertThrows(InvalidAmountException.class, () -> accountBankService.deposit(depositDto));
     }
-
 
 }
